@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { createUser, getUserByEmail } = require('../models/userModel');
 
+
 const registerUser = async (req, res) => {
   const { fullName, email, password } = req.body;
 
@@ -33,14 +34,12 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // Compare password
     const isMatch = await bcrypt.compare(password, user.Password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // Generate JWT token
-    const token = jwt.sign({ customerId: user.customerId }, 'your_jwt_secret', { expiresIn: '1h' });
+    const token = jwt.sign({ customerId: user.customerId, email: user.Email }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.json({ token });
 
   } catch (error) {
@@ -48,4 +47,21 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+const getUserDetails = async (req, res) => {
+  try {
+    console.log('🔍 getUserDetails called');
+    console.log('🔍 req.user:', req.user);
+
+    const user = await getUserByEmail(req.user.email);
+    if (!user) {
+      return res.status(401).json({ error: 'Authentication required.' });
+    }
+
+    res.status(200).json({ name: user.Name, email: user.Email });
+  } catch (error) {
+    console.error('❌ Error in getUserDetails:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+module.exports = { registerUser, loginUser , getUserDetails};
