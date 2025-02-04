@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Manage Flights</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+                body {
+            background-color: #1e293b;
+            color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        h1 {
+            color: #ffa500;
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #f8f9fa;
+        }
+        input[type="text"], input[type="datetime-local"], input[type="number"] {
+            background-color: #28354a;
+            border: 1px solid #444c5c;
+            color: #f8f9fa;
+            padding: 8px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            width: 100%;
+        }
+        button {
+            background-color: #ffa500;
+            border: none;
+            color: #1e293b;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+            font-weight: 500;
+        }
+        button:hover {
+            background-color: #e69500;
+            transform: scale(1.05);
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+
+        h2 {
+            color: #ffa500;
+            margin-bottom: 15px;
+        }
+        #flightList {
+            list-style: none;
+            padding: 0;
+        }
+        #flightList li {
+            background-color: #28354a;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        a { /* Style the "Back to Dashboard" link */
+            color: #ffa500;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+    </style>
+</head>
+<body>
+    <h1>Manage Flights</h1>
+    
+    <!-- Form to add flights -->
+    <form id="flightForm">
+        <label for="flightNumber">Flight Number:</label>
+        <input type="text" id="flightNumber" name="flightNumber" required>
+
+        <label for="departureAirport">Departure Airport Code:</label>
+        <input type="text" id="departureAirport" name="departureAirport" required>
+
+        <label for="arrivalAirport">Arrival Airport Code:</label>
+        <input type="text" id="arrivalAirport" name="arrivalAirport" required>
+
+        <label for="departureTime">Departure Time:</label>
+        <input type="datetime-local" id="departureTime" name="departureTime" required>
+
+        <label for="arrivalTime">Arrival Time:</label>
+        <input type="datetime-local" id="arrivalTime" name="arrivalTime" required>
+
+        <label for="price">Ticket Price (₹):</label>
+        <input type="number" id="price" name="price" step="0.01" required>
+
+        <button type="submit">Add Flight</button>
+    </form>
+
+    <h2>Existing Flights</h2>
+    <ul id="flightList">
+        <% flights.forEach(flight => { %>
+            <li>
+                <%= flight.flightNumber %> - 
+                <%= flight.departureAirportName %> (<%= flight.departureAirport %>) 
+                to <%= flight.arrivalAirportName %> (<%= flight.arrivalAirport %>)  
+                on <%= new Date(flight.departureTime).toLocaleString() %>  
+                (Arrival: <%= new Date(flight.arrivalTime).toLocaleString() %>)  
+                - Price: ₹<%= flight.price %> 
+            </li>
+        <% }); %>
+    </ul>
+
+    <a href="/admin">Back to Dashboard</a>
+
+    <script>
+        document.getElementById('flightForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Get input values
+            const flightNumber = document.getElementById('flightNumber').value;
+            const departureAirport = document.getElementById('departureAirport').value;
+            const arrivalAirport = document.getElementById('arrivalAirport').value;
+            const departureTime = document.getElementById('departureTime').value;
+            const arrivalTime = document.getElementById('arrivalTime').value;
+            const price = parseFloat(document.getElementById('price').value);
+
+            // Prepare request payload
+            const requestBody = {
+                flightNumber,
+                departureTime,
+                arrivalTime,
+                price,
+                departureAirport,
+                arrivalAirport
+            };
+
+            try {
+                const response = await fetch('/api/flights', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message);
+                    window.location.reload(); // Refresh to update flight list
+                } else {
+                    alert(data.error || 'Error occurred');
+                }
+            } catch (error) {
+                alert('Error adding flight: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

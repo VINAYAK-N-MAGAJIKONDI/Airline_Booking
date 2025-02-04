@@ -149,4 +149,25 @@ const sendEmailNotification = async (customerId, flightId) => {
   }
 };
 
-module.exports = { bookFlight, getUserBookings };
+
+
+
+const getBookingsByFlight = async (flightId) => {
+  const [rows] = await db.execute(
+      `SELECT 
+          c.name AS customerName, 
+          s.seatNumber 
+       FROM Booking b
+       JOIN Customer c ON b.customerId = c.customerId
+       JOIN Seat s ON b.bookingId = s.bookingId
+       WHERE b.flightId = ?`,
+      [flightId]
+  );
+  return rows;
+};
+
+
+
+
+
+module.exports = { bookFlight, getUserBookings , getBookingsByFlight};

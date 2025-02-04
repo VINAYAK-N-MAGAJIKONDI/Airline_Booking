@@ -9,6 +9,8 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+app.set('view engine', 'ejs');
+app.set('views', './views');
 
 
 app.use('/api/users', userRoutes);
@@ -26,6 +28,9 @@ app.use('/api/bookings', bookingRoutes);
 const seatRoutes = require('./routes/seatRoutes');
 app.use('/api/seats', seatRoutes);
 
+const adminRoutes = require('./routes/adminRoutes');
+app.use('/admin', adminRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
@@ -33,3 +38,5 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 app.get('/', (req, res) => {
     res.send('Hello, World!');
   });
+
+app.use(express.static('public'));

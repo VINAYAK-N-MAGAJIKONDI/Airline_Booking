@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Airports</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #1e293b;
+            color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        h1 {
+            color: #ffa500;
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #f8f9fa;
+        }
+        input[type="text"] {
+            background-color: #28354a;
+            border: 1px solid #444c5c;
+            color: #f8f9fa;
+            padding: 8px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            width: 100%;
+        }
+        button {
+            background-color: #ffa500;
+            border: none;
+            color: #1e293b;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #e69500;
+        }
+        h2 {
+            color: #ffa500;
+            margin-bottom: 15px;
+        }
+        #airportList {
+            list-style: none;
+            padding: 0;
+        }
+        #airportList li {
+            background-color: #28354a;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #ffa500;
+            border: none;
+            color: #c9a112;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s; /* Add transform transition */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Add a subtle shadow */
+            font-weight: 500; /* Slightly bolder font-weight */
+        }
+        button:hover {
+            background-color: #e69500;
+            transform: scale(1.05); /* Scale up slightly on hover */
+        }
+        button:active {
+            transform: scale(0.95); /* Scale down slightly on click */
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Manage Airports</h1>
+
+        <form id="airportForm">
+            <div class="mb-3">
+                <label for="airportCode" class="form-label">Airport Code:</label>
+                <input type="text" class="form-control" id="airportCode" name="airportCode" required>
+            </div>
+            <div class="mb-3">
+                <label for="airportName" class="form-label">Airport Name:</label>
+                <input type="text" class="form-control" id="airportName" name="airportName" required>
+            </div>
+            <div class="mb-3">
+                <label for="city" class="form-label">City:</label>
+                <input type="text" class="form-control" id="city" name="city" required>
+            </div>
+            <button type="submit" class="btn btn-warning">Add Airport</button>
+        </form>
+
+        <h2>Existing Airports</h2>
+        <ul id="airportList" class="list-group"></ul>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Handle form submission
+        document.getElementById('airportForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent default form submission
+
+            // Collect form data
+            const airportCode = document.getElementById('airportCode').value;
+            const airportName = document.getElementById('airportName').value;
+            const city = document.getElementById('city').value;
+
+            // Prepare the request body
+            const requestBody = {
+                airportCode,
+                airportName,
+                city
+            };
+
+            try {
+                const response = await fetch('/api/airports', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody) // Send data as JSON
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message);
+                    loadAirports(); // Refresh airport list after successful add
+                } else {
+                    alert(data.message || 'Error occurred');
+                }
+            } catch (error) {
+                alert('Error adding airport: ' + error.message);
+            }
+        });
+
+        // Load all airports and display
+        async function loadAirports() {
+            const response = await fetch('/api/airports');
+            const airports = await response.json();
+
+            const airportList = document.getElementById('airportList');
+            airportList.innerHTML = '';
+            airports.forEach(airport => {
+                const li = document.createElement('li');
+                li.textContent = `${airport.airportCode} - ${airport.airportName} (${airport.city})`;
+                airportList.appendChild(li);
+            });
+        }
+
+        loadAirports(); // Initial load of airports
+    </script>
+
+</body>
+</html>
