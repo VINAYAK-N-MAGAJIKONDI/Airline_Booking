@@ -4,6 +4,7 @@ const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
 const { createBooking, getBookingsByCustomer } = require('../models/bookingModel');
 
+
 // Create OAuth2 client
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,  // Client ID from .env
@@ -38,17 +39,15 @@ const checkFlightAvailability = async (flightId) => {
   return availableSeats > 0;
 };
 
-// Book a Flight
+
 const bookFlight = async (req, res) => {
-  const { customerId, flightId } = req.body;
+  const customerId = req.user.customerId; // Extract customerId from the JWT token
+  const { flightId } = req.body;
   const bookingDate = new Date().toISOString().split('T')[0]; // Get today's date
 
   try {
     // Check if the flight exists before booking
-    const flightExists = await checkFlightExists(flightId);
-    if (!flightExists) {
-      return res.status(400).json({ error: 'Flight not found' });
-    }
+
 
     // Check if there are available seats
     const isAvailable = await checkFlightAvailability(flightId);
@@ -69,9 +68,10 @@ const bookFlight = async (req, res) => {
   }
 };
 
-// Get all bookings for a customer
+
+
 const getUserBookings = async (req, res) => {
-  const { customerId } = req.params;
+  const customerId = req.user.customerId; // Extract customerId from the JWT token
 
   try {
     const bookings = await getBookingsByCustomer(customerId);

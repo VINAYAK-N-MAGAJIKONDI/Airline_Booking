@@ -19,4 +19,15 @@ const getAllFlights = async () => {
   return rows;
 };
 
-module.exports = { addFlight, getAllFlights };
+const getFlightsByCriteria = async (departureAirport, arrivalAirport, date) => {
+  const [rows] = await db.execute(
+    `SELECT f.*, da.airportName AS departureAirportName, aa.airportName AS arrivalAirportName
+     FROM Flight f
+     JOIN Airport da ON f.departureAirport = da.airportCode
+     JOIN Airport aa ON f.arrivalAirport = aa.airportCode
+     WHERE f.departureAirport = ? AND f.arrivalAirport = ? AND DATE(f.departureTime) = ?`,
+    [departureAirport, arrivalAirport, date]
+  );
+  return rows;
+};
+module.exports = { addFlight, getAllFlights,  getFlightsByCriteria };

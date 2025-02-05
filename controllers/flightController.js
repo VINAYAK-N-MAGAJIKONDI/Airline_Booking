@@ -1,5 +1,5 @@
-const { addFlight, getAllFlights } = require('../models/flightModel');
 
+const { addFlight, getAllFlights, getFlightsByCriteria } = require('../models/flightModel');
 
 const createFlight = async (req, res) => {
   const { flightNumber, departureTime, arrivalTime, price, departureAirport, arrivalAirport } = req.body;
@@ -21,4 +21,16 @@ const listFlights = async (req, res) => {
   }
 };
 
-module.exports = { createFlight, listFlights };
+const getFlightsByCondition = async (req, res) => {
+  const { departureAirport, arrivalAirport, date } = req.query;
+
+  try {
+    const flights = await getFlightsByCriteria(departureAirport, arrivalAirport, date);
+    res.json(flights);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+
+module.exports = { createFlight, listFlights , getFlightsByCondition };

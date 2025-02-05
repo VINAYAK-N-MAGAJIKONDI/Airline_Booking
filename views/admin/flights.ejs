@@ -4,7 +4,7 @@
     <title>Manage Flights</title>
     <link rel="stylesheet" href="/style.css">
     <style>
-                body {
+        body {
             background-color: #1e293b;
             color: #f8f9fa;
         }
@@ -70,8 +70,30 @@
         a:hover {
             text-decoration: underline;
         }
-
-    </style>
+        .seat-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .seat {
+            width: 40px;
+            height: 40px;
+            background-color: #444c5c;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .seat.selected {
+            background-color: #ffa500;
+        }
+        .seat.unavailable {
+            background-color: #d9534f;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -110,13 +132,30 @@
                 on <%= new Date(flight.departureTime).toLocaleString() %>  
                 (Arrival: <%= new Date(flight.arrivalTime).toLocaleString() %>)  
                 - Price: ₹<%= flight.price %> 
+                <button onclick="showSeatGrid(<%= flight.flightId %>)">Add Seats</button>
             </li>
         <% }); %>
     </ul>
 
+    <div id="seatGridContainer" style="display: none;">
+        <h2>Select Seats for Flight</h2>
+        <div class="seat-grid" id="seatGrid">
+            <% const rows = 7; const cols = 6; const seatLetters = ['A', 'B', 'C', 'D', 'E', 'F']; %>
+            <% for (let row = 1; row <= rows; row++) { %>
+                <% for (let col = 0; col < cols; col++) { %>
+                    <div class="seat" data-seat="<%= row %><%= seatLetters[col] %>"><%= row %><%= seatLetters[col] %></div>
+                <% } %>
+            <% } %>
+        </div>
+        <button onclick="addSeatsToFlight()">Add Selected Seats</button>
+    </div>
+
     <a href="/admin">Back to Dashboard</a>
 
     <script>
+        let selectedSeats = [];
+        let currentFlightId = null;
+
         document.getElementById('flightForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -158,6 +197,78 @@
                 alert('Error adding flight: ' + error.message);
             }
         });
+
+        async function showSeatGrid(flightId) {
+            currentFlightId = flightId;
+            selectedSeats = [];
+            document.getElementById('seatGridContainer').style.display = 'block';
+
+            // Fetch existing seats for the flight
+            try {
+                const response = await fetch(`/api/seats/${flightId}`);
+                const seats = await response.json();
+
+                // Mark existing seats as unavailable
+                document.querySelectorAll('.seat').forEach(seat => {
+                    const seatNumber = seat.getAttribute('data-seat');
+                    const seatData = seats.find(s => s.seatNumber === seatNumber);
+                    if (seatData && !seatData.isAvailable) {
+                        seat.classList.remove('unavailable');
+                        seat.addEventListener('click', toggleSeatSelection);
+                        // seat.classList.add('unavailable');
+                        // seat.classList.remove('selected');
+                        // seat.removeEventListener('click', toggleSeatSelection);
+                    } else {
+                        seat.classList.remove('unavailable');
+                        seat.addEventListener('click', toggleSeatSelection);
+                    }
+                });
+            } catch (error) {
+                alert('Error fetching seats: ' + error.message);
+            }
+        }
+
+        function toggleSeatSelection() {
+            this.classList.toggle('selected');
+            const seatNumber = this.getAttribute('data-seat');
+            if (this.classList.contains('selected')) {
+                selectedSeats.push(seatNumber);
+            } else {
+                selectedSeats = selectedSeats.filter(s => s !== seatNumber);
+            }
+        }
+
+        async function addSeatsToFlight() {
+            if (!currentFlightId || selectedSeats.length === 0) {
+                alert('Please select a flight and seats.');
+                return;
+            }
+
+            const requestBody = {
+                flightId: currentFlightId,
+                seatNumbers: selectedSeats
+            };
+
+            try {
+                const response = await fetch('/api/seats/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message);
+                    window.location.reload(); // Refresh to update seat list
+                } else {
+                    alert(data.error || 'Error occurred');
+                }
+            } catch (error) {
+                alert('Error adding seats: ' + error.message);
+            }
+        }
     </script>
 </body>
 </html>

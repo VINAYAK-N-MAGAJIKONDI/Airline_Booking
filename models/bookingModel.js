@@ -38,12 +38,14 @@ const bookFlight = async (req, res) => {
 
 const getBookingsByCustomer = async (customerId) => {
   const [rows] = await db.execute(
-    `SELECT b.bookingId, b.bookingDate, f.flightNumber, f.departureTime, f.arrivalTime, f.price,
-            da.airportName AS departureAirport, aa.airportName AS arrivalAirport
+    `SELECT b.bookingId, b.bookingDate, f.flightId, f.flightNumber, f.departureTime, f.arrivalTime, f.price,
+            da.airportName AS departureAirport, aa.airportName AS arrivalAirport,
+            COALESCE(s.seatNumber, 'NA') AS seatNumber
      FROM Booking b
      JOIN Flight f ON b.flightId = f.flightId
      JOIN Airport da ON f.departureAirport = da.airportCode
      JOIN Airport aa ON f.arrivalAirport = aa.airportCode
+     LEFT JOIN Seat s ON b.bookingId = s.bookingId
      WHERE b.customerId = ?`,
     [customerId]
   );

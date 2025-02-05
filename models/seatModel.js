@@ -27,4 +27,12 @@ const addSeat = async (flightId, seatNumber) => {
   return result;
 };
 
-module.exports = { checkSeatAvailability, bookSeat, addSeat };
+const getSeatsByFlight = async (flightId) => {
+  const [rows] = await db.execute(
+    'SELECT seatNumber, isAvailable FROM Seat WHERE flightId = ?',
+    [flightId]
+  );
+  return rows;
+};
+
+module.exports = { checkSeatAvailability, bookSeat, addSeat , getSeatsByFlight};

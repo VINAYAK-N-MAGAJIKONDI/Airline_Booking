@@ -6,7 +6,7 @@ const verifyToken = require('../middleware/authmiddleware'); // Import Middlewar
 const router = express.Router();
 
 router.post('/book', verifyToken, bookFlight); // Protected Route
-router.get('/my-bookings/:customerId', verifyToken, getUserBookings); // Protected Route
+router.get('/my-bookings', verifyToken, getUserBookings); // Protected Route
 router.get('/:id', async (req, res) => {
 
     const flightId = req.params.id; // Get the flightId from the URL parameters
