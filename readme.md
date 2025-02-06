@@ -7,6 +7,7 @@ The Airline Booking System is a web application that allows users to book flight
 ## Table of Contents
 
 - [Project Description](#project-description)
+- [Screenshots](#screenshots)
 - [Setup Instructions](#setup-instructions)
 - [API Documentation](#api-documentation)
   - [User APIs](#user-apis)
@@ -16,8 +17,17 @@ The Airline Booking System is a web application that allows users to book flight
   - [Seat APIs](#seat-apis)
 - [Data Models](#data-models)
 - [SQL Schema](#sql-schema)
-- [Screenshots](#screenshots)
+
 - [License](#license)
+- 
+## Screenshots
+
+![Home Page](screenshots/admin.png)
+![Booking Page](screenshots/booking.png)
+![Flights](screenshots/flights.png)
+![](screenshots/flights1.png)
+![Manage](screenshots/manage.png)
+![Seats](screenshots/seats.png)
 
 ## Setup Instructions
 
@@ -364,14 +374,6 @@ CREATE TABLE seats (
 );
 ```
 
-## Screenshots
-
-![Home Page](screenshots/admin.png)
-![Booking Page](screenshots/booking.png)
-![Flights](screenshots/flights.png)
-![](screenshots/flights1.png)
-![Manage](screenshots/manage.png)
-![Seats](screenshots/seats.png)
 
 
 ## License
