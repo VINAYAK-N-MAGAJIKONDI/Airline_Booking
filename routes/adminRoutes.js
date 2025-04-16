@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { addAirport, getAllAirports } = require('../models/airportModel');
+const { addAirport, getAllAirports , getTotalAirports } = require('../models/airportModel');
 
-const {getAllFlights, addFlight } = require('../models/flightModel');
+const {addFlight, getAllFlights,  getFlightsByCriteria , getTotalFlights, getHighestBookedFlight , getMostCrowdedDepartureAirport2025 , getMostCrowdedArrivalAirport2025 } = require('../models/flightModel');
 const { getBookingsByFlight } = require('../controllers/bookingController');
+
 
 
 
@@ -26,6 +27,26 @@ router.get('/bookings', async (req, res) => {
 
 
 
+router.get('/', async (req, res) => {
+    try {
+        const totalAirports = await getTotalAirports();
+        const totalFlights = await getTotalFlights();
+        const highestBookedFlight = await getHighestBookedFlight();
+        const mostCrowdedDeparture = await getMostCrowdedDepartureAirport2025();
+        const mostCrowdedArrival = await getMostCrowdedArrivalAirport2025();
+
+        res.render('admin/index', {
+            totalAirports,
+            totalFlights,
+            highestBookedFlight,
+            mostCrowdedDeparture,
+            mostCrowdedArrival
+        });
+    } catch (error) {
+        console.error('Error fetching dashboard stats:', error);
+        res.status(500).send('Server Error');
+    }
+});
 // Admin Dashboard Home
 router.get('/', (req, res) => {
     res.render('admin/index');

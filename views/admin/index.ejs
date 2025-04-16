@@ -7,82 +7,178 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
+        /* Background Styling */
         body {
-            background-color: #1e293b; /* Dark blue background */
-            color: #f8f9fa; /* Light text color */
+            background: linear-gradient(135deg, #1e293b, #3b4a66);
+            color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
+
+        /* Dashboard Card Styling */
         .dashboard-card {
-            background-color: #28354a; /* Darker blue card background */
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            padding: 20px;
+            background: rgba(40, 53, 74, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            padding: 25px;
             margin-bottom: 20px;
-            transition: transform 0.3s ease-in-out; /* Add transition for hover effect */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
+        /* Card Hover Effects */
         .dashboard-card:hover {
-            transform: scale(1.05); /* Scale up on hover */
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 165, 0, 0.5);
         }
+
         .dashboard-icon {
-            font-size: 3em;
-            color: #ffa500; /* Orange icon color */
-            margin-bottom: 15px;
-            transition: transform 0.5s ease-in-out; /* Add transition for icon */
+            font-size: 3.5rem;
+            color: #ffa500;
+            transition: transform 0.5s ease-in-out;
         }
+
         .dashboard-card:hover .dashboard-icon {
-            transform: rotate(360deg); /* Rotate icon on hover */
+            transform: rotate(360deg);
         }
 
         .card-title {
             font-weight: bold;
             color: #f8f9fa;
         }
+
         a {
             text-decoration: none;
-            color: #f8f9fa; 
-        }
-        a:hover {
-            color: #ffa500;  /* Orange hover color for links */
-        }
-        .display-4 {
-            color: #ffa500;  /* Orange for the main heading */
+            color: #f8f9fa;
         }
 
+        a:hover {
+            color: #ffa500;
+        }
+
+        .display-4 {
+            color: #ffa500;
+            font-weight: bold;
+        }
+
+        /* Statistics Section */
+        .stats-container {
+            margin-top: 50px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(255, 165, 0, 0.5);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            color: #ffa500;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .stat-title {
+            font-size: 1rem;
+            color: #d1d5db;
+        }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="display-4 text-center mb-4">Welcome to Admin Dashboard</h1>
+    <div class="container mt-5 text-center">
+        <h1 class="display-4 mb-4">Admin Dashboard</h1>
 
-        <div class="row">
+        <div class="row justify-content-center">
             <div class="col-md-4">
                 <div class="dashboard-card text-center">
-                    <a href="/admin/airports" class="text-decoration-none text-dark">
+                    <a href="/admin/airports">
                         <i class="bi bi-airplane-engines-fill dashboard-icon"></i>
-                        <h5 class="card-title">Manage Airports</h5>
+                        <h5 class="card-title mt-2">Manage Airports</h5>
                     </a>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="dashboard-card text-center">
-                    <a href="/admin/flights" class="text-decoration-none text-dark">
+                    <a href="/admin/flights">
                         <i class="bi bi-airplane dashboard-icon"></i>
-                        <h5 class="card-title">Manage Flights</h5>
+                        <h5 class="card-title mt-2">Manage Flights</h5>
                     </a>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="dashboard-card text-center">
-                    <a href="/admin/bookings" class="text-decoration-none text-dark">
+                    <a href="/admin/bookings">
                         <i class="bi bi-calendar2-check dashboard-icon"></i>
-                        <h5 class="card-title">View Bookings</h5>
+                        <h5 class="card-title mt-2">View Bookings</h5>
                     </a>
                 </div>
             </div>
         </div>
 
-            <!-- ... (Rest of your card HTML as before) ... -->
+        <!-- Enhanced Statistics Section -->
+        <div class="stats-container row mt-5">
+            <h2 class="mb-4 text-center">Statistics</h2>
+
+            <div class="col-md-4 mb-3">
+                <div class="stat-card">
+                    <i class="bi bi-building stat-icon"></i>
+                    <div class="stat-value"><%= totalAirports %></div>
+                    <div class="stat-title">Total Airports</div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <div class="stat-card">
+                    <i class="bi bi-airplane stat-icon"></i>
+                    <div class="stat-value"><%= totalFlights %></div>
+                    <div class="stat-title">Total Flights</div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <div class="stat-card">
+                    <i class="bi bi-trophy stat-icon"></i>
+                    <div class="stat-value"><%= highestBookedFlight.flightNumber %></div>
+                    <div class="stat-title">Most Booked Flight</div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <div class="stat-card">
+                    <i class="bi bi-airplane-engines stat-icon"></i>
+                    <div class="stat-value"><%= mostCrowdedDeparture.departureAirport %></div>
+                    <div class="stat-title">Most Crowded Departure (2025)</div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <div class="stat-card">
+                    <i class="bi bi-geo-alt-fill stat-icon"></i>
+
+                    <div class="stat-value"><%= mostCrowdedArrival.arrivalAirport %></div>
+                    <div class="stat-title">Most Crowded Arrival (2025)</div>
+                </div>
+            </div>
         </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

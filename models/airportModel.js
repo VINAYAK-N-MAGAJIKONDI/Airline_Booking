@@ -8,9 +8,15 @@ const addAirport = async (airportCode, airportName, city) => {
   return result;
 };
 
+const getTotalAirports = async () => {
+  const [rows] = await db.execute('SELECT COUNT(*) AS totalAirports FROM Airport');
+  return rows[0].totalAirports;
+};
+
+
 const getAllAirports = async () => {
   const [rows] = await db.execute('SELECT * FROM Airport');
   return rows;
 };
 
-module.exports = { addAirport, getAllAirports };
+module.exports = { addAirport, getAllAirports , getTotalAirports};

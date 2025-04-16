@@ -1,0 +1,65 @@
+-- Select flights with the highest number of bookings
+SELECT f.flightNumber, COUNT(b.bookingId) AS totalBookings
+FROM Flight f
+JOIN Booking b ON f.flightId = b.flightId
+GROUP BY f.flightNumber
+ORDER BY totalBookings DESC
+LIMIT 10;
+
+-- Select customers with the most bookings
+SELECT c.Name, c.Email, COUNT(b.bookingId) AS totalBookings
+FROM Customer c
+JOIN Booking b ON c.customerId = b.customerId
+GROUP BY c.customerId
+ORDER BY totalBookings DESC
+LIMIT 10;
+
+-- Select flights with the highest revenue
+SELECT f.flightNumber, SUM(f.price) AS totalRevenue
+FROM Flight f
+JOIN Booking b ON f.flightId = b.flightId
+GROUP BY f.flightNumber
+ORDER BY totalRevenue DESC
+LIMIT 10;
+
+-- Select average ticket price for each flight
+SELECT f.flightNumber, AVG(f.price) AS averagePrice
+FROM Flight f
+JOIN Booking b ON f.flightId = b.flightId
+GROUP BY f.flightNumber;
+
+-- Select flights with the longest duration
+SELECT f.flightNumber, TIMESTAMPDIFF(HOUR, f.departureTime, f.arrivalTime) AS durationHours
+FROM Flight f
+ORDER BY durationHours DESC
+LIMIT 10;
+
+-- Select flights booked by a specific customer email
+SELECT f.*
+FROM Flight f
+JOIN Booking b ON f.flightId = b.flightId
+JOIN Customer c ON b.customerId = c.customerId
+WHERE c.Email = 'john.doe@example.com';
+
+-- Select flights by departure or arrival city
+SELECT f.*
+FROM Flight f
+JOIN Airport a1 ON f.departureAirport = a1.airportCode
+JOIN Airport a2 ON f.arrivalAirport = a2.airportCode
+WHERE a1.city = 'New York' OR a2.city = 'Los Angeles';
+
+-- Select customers who have booked a specific flight
+SELECT c.*
+FROM Customer c
+JOIN Booking b ON c.customerId = b.customerId
+WHERE b.flightId = 1;
+
+
+-- Select flights with the most available seats
+SELECT f.flightNumber, COUNT(s.seatId) AS availableSeats
+FROM Flight f
+JOIN Seat s ON f.flightId = s.flightId
+WHERE s.isAvailable = true
+GROUP BY f.flightNumber
+ORDER BY availableSeats DESC
+LIMIT 10;

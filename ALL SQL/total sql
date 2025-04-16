@@ -1,0 +1,208 @@
+CREATE TABLE `Customer` (
+  `customerId` int PRIMARY KEY AUTO_INCREMENT,
+  `Name` varchar(255) NOT NULL,
+  `Email` varchar(255) UNIQUE NOT NULL,
+  `Password` varchar(255) NOT NULL
+);
+
+CREATE TABLE `Airport` (
+  `airportCode` varchar(3) PRIMARY KEY,
+  `airportName` varchar(255) NOT NULL,
+  `city` varchar(255) NOT NULL
+);
+
+CREATE TABLE `Flight` (
+  `flightId` int PRIMARY KEY AUTO_INCREMENT,
+  `flightNumber` varchar(10) UNIQUE NOT NULL,
+  `departureTime` datetime NOT NULL,
+  `arrivalTime` datetime NOT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `departureAirport` varchar(3) NOT NULL,
+  `arrivalAirport` varchar(3) NOT NULL,
+  FOREIGN KEY (`departureAirport`) REFERENCES `Airport` (`airportCode`),
+  FOREIGN KEY (`arrivalAirport`) REFERENCES `Airport` (`airportCode`)
+);
+
+CREATE TABLE `Booking` (
+  `bookingId` int PRIMARY KEY AUTO_INCREMENT,
+  `bookingDate` date NOT NULL,
+  `customerId` int NOT NULL,
+  `flightId` int NOT NULL,
+  FOREIGN KEY (`customerId`) REFERENCES `Customer` (`customerId`),
+  FOREIGN KEY (`flightId`) REFERENCES `Flight` (`flightId`)
+);
+
+CREATE TABLE `Seat` (
+  `seatId` int PRIMARY KEY AUTO_INCREMENT,
+  `seatNumber` varchar(5) NOT NULL,
+  `flightId` int NOT NULL,
+  `bookingId` int NULL,
+  `isAvailable` boolean NOT NULL DEFAULT true,
+  FOREIGN KEY (`flightId`) REFERENCES `Flight` (`flightId`),
+  FOREIGN KEY (`bookingId`) REFERENCES `Booking` (`bookingId`)
+);
+
+INSERT INTO `Customer` (`Name`, `Email`, `Password`) VALUES
+('John Doe', 'john.doe@example.com', 'password123'),
+('Jane Smith', 'jane.smith@example.com', 'password123'),
+('Alice Johnson', 'alice.johnson@example.com', 'password123'),
+('Bob Brown', 'bob.brown@example.com', 'password123'),
+('Charlie Davis', 'charlie.davis@example.com', 'password123'),
+('Diana Evans', 'diana.evans@example.com', 'password123'),
+('Ethan Foster', 'ethan.foster@example.com', 'password123'),
+('Fiona Green', 'fiona.green@example.com', 'password123'),
+('George Harris', 'george.harris@example.com', 'password123'),
+('Hannah White', 'hannah.white@example.com', 'password123');
+
+INSERT INTO `Airport` (`airportCode`, `airportName`, `city`) VALUES
+('JFK', 'John F. Kennedy International Airport', 'New York'),
+('LAX', 'Los Angeles International Airport', 'Los Angeles'),
+('ORD', 'Hare International Airport', 'Chicago'),
+('DFW', 'Dallas/Fort Worth International Airport', 'Dallas'),
+('DEN', 'Denver International Airport', 'Denver'),
+('SFO', 'San Francisco International Airport', 'San Francisco'),
+('SEA', 'Seattle-Tacoma International Airport', 'Seattle'),
+('MIA', 'Miami International Airport', 'Miami'),
+('ATL', 'Hartsfield-Jackson Atlanta International Airport', 'Atlanta'),
+('BOS', 'Logan International Airport', 'Boston');
+
+INSERT INTO `Flight` (`flightNumber`, `departureTime`, `arrivalTime`, `price`, `departureAirport`, `arrivalAirport`) VALUES
+('AA101', '2023-12-01 10:00:00', '2023-12-01 14:00:00', 300.00, 'JFK', 'LAX'),
+('UA202', '2023-12-02 11:00:00', '2023-12-02 15:00:00', 320.00, 'ORD', 'DFW'),
+('DL303', '2023-12-03 12:00:00', '2023-12-03 16:00:00', 340.00, 'DEN', 'SFO'),
+('SW404', '2023-12-04 13:00:00', '2023-12-04 17:00:00', 360.00, 'SEA', 'MIA'),
+('AA505', '2023-12-05 14:00:00', '2023-12-05 18:00:00', 380.00, 'ATL', 'BOS'),
+('UA606', '2023-12-06 15:00:00', '2023-12-06 19:00:00', 400.00, 'JFK', 'ORD'),
+('DL707', '2023-12-07 16:00:00', '2023-12-07 20:00:00', 420.00, 'LAX', 'DFW'),
+('SW808', '2023-12-08 17:00:00', '2023-12-08 21:00:00', 440.00, 'DEN', 'SEA'),
+('AA909', '2023-12-09 18:00:00', '2023-12-09 22:00:00', 460.00, 'MIA', 'ATL'),
+('UA010', '2023-12-10 19:00:00', '2023-12-10 23:00:00', 480.00, 'BOS', 'SFO');
+
+INSERT INTO `Booking` (`bookingDate`, `customerId`, `flightId`) VALUES
+('2023-11-01', 1, 1),
+('2023-11-02', 2, 2),
+('2023-11-03', 3, 3),
+('2023-11-04', 4, 4),
+('2023-11-05', 5, 5),
+('2023-11-06', 6, 6),
+('2023-11-07', 7, 7),
+('2023-11-08', 8, 8),
+('2023-11-09', 9, 9),
+('2023-11-10', 10, 10);
+
+INSERT INTO `Seat` (`seatNumber`, `flightId`, `bookingId`, `isAvailable`) VALUES
+('1A', 1, 1, false),
+('1B', 1, NULL, true),
+('1C', 1, NULL, true),
+('2A', 2, 2, false),
+('2B', 2, NULL, true),
+('2C', 2, NULL, true),
+('3A', 3, 3, false),
+('3B', 3, NULL, true),
+('3C', 3, NULL, true),
+('4A', 4, 4, false),
+('4B', 4, NULL, true),
+('4C', 4, NULL, true),
+('5A', 5, 5, false),
+('5B', 5, NULL, true),
+('5C', 5, NULL, true),
+('6A', 6, 6, false),
+('6B', 6, NULL, true),
+('6C', 6, NULL, true),
+('7A', 7, 7, false),
+('7B', 7, NULL, true),
+('7C', 7, NULL, true),
+('8A', 8, 8, false),
+('8B', 8, NULL, true),
+('8C', 8, NULL, true),
+('9A', 9, 9, false),
+('9B', 9, NULL, true),
+('9C', 9, NULL, true),
+('10A', 10, 10, false),
+('10B', 10, NULL, true),
+('10C', 10, NULL, true);
+
+
+-- Select all customers
+SELECT * FROM Customer;
+
+-- Select all airports
+SELECT * FROM Airport;
+
+-- Select all flights
+SELECT * FROM Flight;
+
+-- Select all bookings
+SELECT * FROM Booking;
+
+-- Select all seats
+SELECT * FROM Seat;
+
+-- Select flights by departure airport code
+SELECT * FROM Flight WHERE departureAirport = 'JFK';
+
+-- Select flights by arrival airport code
+SELECT * FROM Flight WHERE arrivalAirport = 'LAX';
+
+-- Select flights within a specific date range
+SELECT * FROM Flight WHERE departureTime BETWEEN '2023-12-01' AND '2023-12-31';
+
+-- Select bookings for a specific customer by customer ID
+SELECT * FROM Booking WHERE customerId = 1;
+
+-- Select bookings for a specific flight by flight ID
+SELECT * FROM Booking WHERE flightId = 1;
+
+-- Select available seats for a specific flight by flight ID
+SELECT * FROM Seat WHERE flightId = 1 AND isAvailable = true;
+
+-- Select booked seats for a specific flight by flight ID
+SELECT * FROM Seat WHERE flightId = 1 AND isAvailable = false;
+
+-- Select customer details for a specific booking by booking ID
+SELECT c.* FROM Customer c
+JOIN Booking b ON c.customerId = b.customerId
+WHERE b.bookingId = 1;
+
+-- Select flight details for a specific booking by booking ID
+SELECT f.* FROM Flight f
+JOIN Booking b ON f.flightId = b.flightId
+WHERE b.bookingId = 1;
+
+-- Select seat details for a specific booking by booking ID
+SELECT s.* FROM Seat s
+JOIN Booking b ON s.bookingId = b.bookingId
+WHERE b.bookingId = 1;
+
+-- Select flights that have available seats
+SELECT f.* FROM Flight f
+JOIN Seat s ON f.flightId = s.flightId
+WHERE s.isAvailable = true
+GROUP BY f.flightId;
+
+-- Select total number of bookings for each flight
+SELECT f.flightNumber, COUNT(b.bookingId) AS totalBookings
+FROM Flight f
+JOIN Booking b ON f.flightId = b.flightId
+GROUP BY f.flightNumber;
+
+-- Select total number of available seats for each flight
+SELECT f.flightNumber, COUNT(s.seatId) AS availableSeats
+FROM Flight f
+JOIN Seat s ON f.flightId = s.flightId
+WHERE s.isAvailable = true
+GROUP BY f.flightNumber;
+
+-- Select flights that have no available seats
+SELECT f.* FROM Flight f
+WHERE NOT EXISTS (
+  SELECT 1 FROM Seat s
+  WHERE s.flightId = f.flightId AND s.isAvailable = true
+);
+
+-- Select customers who have made multiple bookings
+SELECT c.*, COUNT(b.bookingId) AS totalBookings
+FROM Customer c
+JOIN Booking b ON c.customerId = b.customerId
+GROUP BY c.customerId
+HAVING COUNT(b.bookingId) > 1;
